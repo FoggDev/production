@@ -1,9 +1,6 @@
 version: 2.1
 jobs:
   build:
-    branches:
-      only:
-        - master
     working_directory: ~/tmp
     docker:
       - image: cimg/node:14.16.1
@@ -13,3 +10,10 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_IP 'cd production; git checkout master; git pull; npm install; npm run start:production;'
+workflows:
+  build-deploy:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only: master
